@@ -1,82 +1,82 @@
-import React, {useEffect, useState} from 'react';
- 
-import './App.css';
+import React, { useEffect, useState } from "react";
 
-import Chuck  from './chuck.png'
+import "./App.css";
 
-import axios from 'axios'
+import Chuck from "./chuck.png";
+
+import axios from "axios";
 
 function App() {
-  const [state, setState] = useState({
-    joke:''
-  })
-  const [query, setQuery] = useState('teeth');
+  const [joke, setJoke] = useState("");
+  const [query, setQuery] = useState("");
+  const [searchedJokes, setSearchedJokes] = useState([]);
 
-useEffect(()=>{
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  fetchData();
-  
+  const fetchData = async () => {
+    const response = await axios.get("https://api.chucknorris.io/jokes/random");
+    console.log(response.data.value);
+    setJoke(response.data.value);
+  };
+  const getResult = async (e) => {
+    e.preventDefault();
+    const searchUrl = `https://api.chucknorris.io/jokes/search/`;
+    const res = await axios.get(searchUrl, {
+      params: {
+        query: query,
+      },
+    });
+    console.log(res.data.result)
+    setSearchedJokes(res.data.result)
 
-},[])
+    console.log(searchedJokes.length)
+  };
 
-const fetchData = async() => {
-  const response = await axios.get('https://api.chucknorris.io/jokes/random')
-  console.log(response.data.value);
-  setState({
-    ...state,
-    joke:response.data.value
-  })
-  
-}
-const getResult = async() => {
-  const res = await axios.get(`https://api.chucknorris.io/jokes/search?query=${query}`)
-  console.log(res.data.result)
-  setQuery ({
-    query:res.data.result
-  })
-  
-}
-
-const handleSearch = (e)=>{
-  e.preventDefault();
-  getResult();
-}
-
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // change state for query her
+    setQuery(e.target.value);
+    console.log(query);
+  };
 
   return (
-    <div className='container'>
-        <div className="row">
-          <div className="col-6">
-            <h1 className='title'>CHUCKNORRIS API</h1>
-            <img src={Chuck} alt="Chuck Norris"/>
-          </div>
-          <div className="col-6">
-            <div className="card">
-              <div className="card-header">
-                Search for a word
-              </div>
-              <div className="card-body">
-                <input type='text'/>
-              </div>
-           
-            
+    <div className="container">
+      <div className="row">
+        <div className="col-6">
+          <h1 className="title">CHUCKNORRIS API</h1>
+          <img src={Chuck} alt="Chuck Norris" />
+        </div>
+        <div className="col-6">
+          <div className="card">
+            <div className="card-header">Search for a word</div>
+            <div className="card-body">
+              <input type="text" defaultValue={query} onChange={handleSearch} />
             </div>
-            <div>
-          <button className="btn btn-warning" onClick={fetchData}>Generate Joke</button>
-        </div>
           </div>
-
-       <h3 className="subTitle">{state.joke}</h3>
+          <div>
+            <button className="btn btn-warning" onClick={getResult}>
+              Generate Joke
+            </button>
+          </div>
         </div>
 
-        {/* <form onSubmit ={handleSearch}>
-                <input type="text"
-                    onChange = { e => {setQuery(e.target.value)}; value={query}/>
-               <button type='submit'>Search for topic</button>
-        </form> */}
-    
+        {/* <h3 className="subTitle">{joke}</h3> */}
+  <div className="randomJoke">{joke}</div>
+  <h3 className="searched_jokes_title">Searched Jokes</h3>
+<div className="searchedJokes">
+  {searchedJokes.length <= 0 ? (
+    <p className="no_search">You have no searched joke yet</p>
+  ) : (
+    searchedJokes.map((result,index) =>
+      <div key={index} className="single_search">{result.value}</div>)
+      .filter((result,index) => index <= 5)
+  )}
+</div>
+      </div>
     </div>
-      );
+  );
 }
 
 export default App;
