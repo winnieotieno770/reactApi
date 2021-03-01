@@ -2,3 +2,24 @@
 p{
   color : black
 }
+
+.randomJoke {
+  color: green;
+  font-weight: bold;
+  font-size: 1em;
+  margin-top: 10px;
+}
+
+.single_search {
+  color: red;
+  padding: 10px 0;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.searched_jokes_title {
+  text-transform: uppercase;
+  font-size: 1.5em;
+  text-decoration: underline;
+  margin: 10px 0;
+}
